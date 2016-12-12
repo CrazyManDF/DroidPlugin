@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,15 +27,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.morgoo.droidplugin.pm.PluginManager;
-import com.morgoo.helper.compat.PackageManagerCompat;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.morgoo.helper.compat.PackageManagerCompat.*;
+import static com.morgoo.helper.compat.PackageManagerCompat.INSTALL_FAILED_NOT_SUPPORT_ABI;
+import static com.morgoo.helper.compat.PackageManagerCompat.INSTALL_SUCCEEDED;
 
 public class ApkFragment extends ListFragment implements ServiceConnection {
+
+    private static final String TAG = "ApkFragment";
+
     private ArrayAdapter<ApkItem> adapter;
     final Handler handler = new Handler();
 
@@ -48,8 +52,10 @@ public class ApkFragment extends ListFragment implements ServiceConnection {
 
 
         adapter = new ArrayAdapter<ApkItem>(getActivity(), 0) {
+
             @Override
             public View getView(final int position, View convertView, final ViewGroup parent) {
+
                 if (convertView == null) {
                     convertView = LayoutInflater.from(getActivity()).inflate(R.layout.apk_item, null);
                 }
@@ -194,6 +200,8 @@ public class ApkFragment extends ListFragment implements ServiceConnection {
             public void run() {
                 File file = Environment.getExternalStorageDirectory();
 
+                Log.d(TAG, "==" + file.getAbsolutePath());
+
                 List<File> apks = new ArrayList<File>(10);
                 File[] files = file.listFiles();
                 if (files != null) {
@@ -205,7 +213,7 @@ public class ApkFragment extends ListFragment implements ServiceConnection {
                 }
 
 
-                file = new File(Environment.getExternalStorageDirectory(), "360Download");
+                file = new File(Environment.getExternalStorageDirectory(), "Download");
                 if (file.exists() && file.isDirectory()) {
                     File[] files1 = file.listFiles();
                     if (files1 != null) {
